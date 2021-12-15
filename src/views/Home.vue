@@ -1,18 +1,43 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div>
+    <h1>Tasks</h1>
+    <div class="tasks-block">
+      <div v-for="task in tasks" :key="task.name">
+        <h2>{{ task.name }}</h2>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from "vue-class-component";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import { defineComponent, onMounted, ref } from "vue";
+import { useStore } from "vuex";
+import Task from "../models/Task";
 
-@Options({
-  components: {
-    HelloWorld,
+export default defineComponent({
+  setup() {
+    const store = useStore();
+    let tasks = ref([]);
+
+    function setTaskComplete(task: Task): void {
+      store.commit("completeTask", task);
+    }
+
+    function deleteTask(task: Task) {
+      store.commit("deleteTask", task);
+    }
+
+    function getTasks() {
+      tasks.value = store.state.tasks;
+    }
+
+    onMounted(getTasks);
+
+    return {
+      tasks,
+    };
   },
-})
-export default class Home extends Vue {}
+});
 </script>
+
+<style scoped></style>
